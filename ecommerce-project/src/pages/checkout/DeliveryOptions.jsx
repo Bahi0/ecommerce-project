@@ -4,7 +4,9 @@ import { formatMoney } from '../../utils/money';
 export function DeliveryOptions({cartItem, deliveryOptions,}) {
   return (
     <div className="delivery-options">
-      <div className="delivery-options-title">Choose a delivery option:</div>
+      <div className="delivery-options-title">
+        Choose a delivery option:
+        </div>
       {deliveryOptions.map((deliveryOption) => {
         let priceString = "FREE Shipping";
 

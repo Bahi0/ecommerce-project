@@ -3,6 +3,7 @@ import dayjs from 'dayjs';
 import { useState, useEffect, Fragment } from 'react';
 import { Header } from '../../components/Header';
 import { formatMoney } from '../../utils/money';
+import './header.css';
 import './OrdersPage.css';
 
 export function OrdersPage({ cart }) {
@@ -60,10 +61,7 @@ export function OrdersPage({ cart }) {
                             {orderProduct.product.name}
                           </div>
                           <div className="product-delivery-date">
-                            Arriving on:{" "}
-                            {dayjs(orderProduct.estimatedDeliveryTimeMs).format(
-                              "MMMM D",
-                            )}
+                            Arriving on:{dayjs(orderProduct.estimatedDeliveryTimeMs).format('MMMM D',)}
                           </div>
                           <div className="product-quantity">
                             Quantity: {orderProduct.quantity}
