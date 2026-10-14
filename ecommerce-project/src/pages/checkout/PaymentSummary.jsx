@@ -54,8 +54,10 @@ const navigate = useNavigate();
             </div>
           </div>
 
-          <button className="place-order-button button-primary">
-            onClick={() => createOrder()} 
+          <button 
+            className="place-order-button button-primary"
+            onClick={() => createOrder()}
+          >
             Place your order
           </button>
         </>
