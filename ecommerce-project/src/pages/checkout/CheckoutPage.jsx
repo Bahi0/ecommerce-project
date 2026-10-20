@@ -11,17 +11,24 @@ export function CheckoutPage({ cart, loadCart }) {
 
   useEffect(() => {
     const fetchCheckoutData = async () => {
-    let response = await axios.get(
-      '/api/delivery-options?expand=estimatedDeliveryTime'
-    );
-    setDeliveryOptions(response.data);
+      try {
+        const deliveryResponse = await axios.get(
+          '/api/delivery-options?expand=estimatedDeliveryTime'
+        );
+        setDeliveryOptions(deliveryResponse.data);
    
-  response = await axios.get('/api/payment-summary');
-  setPaymentSummary(response.data);
-};
+        const paymentResponse = await axios.get('/api/payment-summary');
+        setPaymentSummary(paymentResponse.data);
+      } catch (error) {
+        console.error("Failed to load checkout data", error);
+      }
+    };
 
-   fetchCheckoutData();
-  }, [cart]); 
+    fetchCheckoutData();
+  }, []); // Run only once on mount! (Or use cart.length if you need it to refresh on change)
+
+  // Calculate total items dynamically instead of hardcoding "3 items"
+  const totalItemsCount = cart.reduce((sum, item) => sum + (item.quantity || 1), 0);
 
   return (
     <>
@@ -39,7 +46,7 @@ export function CheckoutPage({ cart, loadCart }) {
           <div className="checkout-header-middle-section">
             Checkout (
             <a className="return-to-home-link" href="/">
-              3 items
+              {totalItemsCount} items
             </a>
             )
           </div>
@@ -54,11 +61,19 @@ export function CheckoutPage({ cart, loadCart }) {
         <div className="page-title">Review your order</div>
 
         <div className="checkout-grid">
-          <OrderSummary cart={cart} deliveryOptions={deliveryOptions}
-          loadCart={loadCart} />
+          <OrderSummary 
+            cart={cart} 
+            deliveryOptions={deliveryOptions}
+            loadCart={loadCart} 
+          />
 
-
-        <PaymentSummary paymentSummary={paymentSummary} loadCart={loadCart} />
+          {/* Only render PaymentSummary when data is ready to prevent NaN crashes */}
+          {paymentSummary && (
+            <PaymentSummary 
+              paymentSummary={paymentSummary} 
+              loadCart={loadCart} 
+            />
+          )}
         </div>
       </div>
     </>

@@ -5,7 +5,8 @@ import { Header } from '../../components/Header';
 import { formatMoney } from '../../utils/money';
 import './OrdersPage.css';
 
-export function OrdersPage({ cart }) {
+// 1. Destructure loadCart from the props
+export function OrdersPage({ cart, loadCart }) {
   const [orders, setOrders] = useState([]);
 
   useEffect(() => {
@@ -13,6 +14,23 @@ export function OrdersPage({ cart }) {
       setOrders(response.data);
     });
   }, []);
+
+  // 2. Create the function to handle adding the product back to the cart
+  const addToCart = async (productId) => {
+    try {
+      await axios.post('/api/cart-items', {
+        productId: productId,
+        quantity: 1
+      });
+      // Refresh the cart state in App.js so the header updates instantly
+      if (loadCart) {
+        loadCart();
+      }
+      alert('Added to cart!');
+    } catch (error) {
+      console.error('Failed to add item to cart', error);
+    }
+  };
 
   return (
     <>
@@ -60,12 +78,17 @@ export function OrdersPage({ cart }) {
                             {orderProduct.product.name}
                           </div>
                           <div className="product-delivery-date">
-                            Arriving on:{dayjs(orderProduct.estimatedDeliveryTimeMs).format('MMMM D',)}
+                            Arriving on: {dayjs(orderProduct.estimatedDeliveryTimeMs).format('MMMM D')}
                           </div>
                           <div className="product-quantity">
                             Quantity: {orderProduct.quantity}
                           </div>
-                          <button className="buy-again-button button-primary">
+                          
+                          {/* 3. Attach the onClick event handler here */}
+                          <button 
+                            className="buy-again-button button-primary"
+                            onClick={() => addToCart(orderProduct.product.id)}
+                          >
                             <img
                               className="buy-again-icon"
                               src="images/icons/buy-again.png"
